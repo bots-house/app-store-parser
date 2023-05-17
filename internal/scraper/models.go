@@ -66,21 +66,17 @@ func (spec *appsSpec) validate() error {
 }
 
 func (spec appsSpec) applyIDs(ids ...int64) appsSpec {
-	if len(ids) == 0 {
-		return spec
-	}
-
-	spec.ids = append(spec.ids, ids...)
+	spec.ids = shared.MapCheck(ids, func(id int64) (int64, bool) {
+		return id, id != 0
+	})
 
 	return spec
 }
 
 func (spec appsSpec) applyAppIDs(ids ...string) appsSpec {
-	if len(ids) == 0 {
-		return spec
-	}
-
-	spec.appIDs = append(spec.appIDs, ids...)
+	spec.appIDs = shared.MapCheck(ids, func(id string) (string, bool) {
+		return id, id != ""
+	})
 
 	return spec
 }

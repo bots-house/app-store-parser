@@ -66,6 +66,16 @@ func Test_Collector(t *testing.T) {
 		assert.NoError(t, checkApp(app))
 	})
 
+	t.Run("App by app id", func(t *testing.T) {
+		// "com.facebook.Messenger"
+		app, err := collector.App(ctx, AppSpec{AppID: "com.facebook.Messenger"})
+		if !assert.NoError(t, err) {
+			return
+		}
+
+		assert.NoError(t, checkApp(app))
+	})
+
 	t.Run("App with ratings", func(t *testing.T) {
 		app, err := collector.App(ctx, AppSpec{ID: id, Ratings: true})
 		if !assert.NoError(t, err) {
