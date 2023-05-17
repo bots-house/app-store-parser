@@ -14,6 +14,7 @@ const (
 	similarURL = "https://itunes.apple.com/us/app/app/id"
 	ratingsURL = "https://itunes.apple.com/%s/customer-reviews/id%d"
 	listURL    = "http://ax.itunes.apple.com/WebObjects/MZStoreServices.woa/ws/RSS/%s/%s/limit=%d/json"
+	searchURL  = "https://search.itunes.apple.com/WebObjects/MZStore.woa/wa/search"
 )
 
 type lookupResponse[T any] struct {
@@ -100,5 +101,12 @@ func appsSpecFromDev(spec shared.DeveloperSpec) appsSpec {
 		ids:     ids,
 		country: spec.Country,
 		lang:    spec.Lang,
+	}
+}
+
+func appsSpecFromSearch(spec shared.SearchSpec) appsSpec {
+	return appsSpec{
+		lang:    spec.Lang,
+		country: spec.Country,
 	}
 }

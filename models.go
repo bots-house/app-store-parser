@@ -94,3 +94,4 @@ type Ratings shared.Ratings
 type RatingsSpec shared.RatingsSpec
 type DeveloperSpec shared.DeveloperSpec
 type ListSpec shared.ListSpec
+type SearchSpec shared.SearchSpec

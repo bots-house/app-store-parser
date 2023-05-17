@@ -201,7 +201,7 @@ func (spec *ListSpec) sanitize() {
 		spec.Collection = "TOP_FREE_IOS"
 	}
 
-	if spec.Count == 0 {
+	if spec.Count <= 0 {
 		spec.Count = 50
 	}
 
@@ -245,4 +245,54 @@ func (spec ListSpec) Path(path string) string {
 	}
 
 	return fmt.Sprintf(path, collection, category, spec.Count)
+}
+
+type SearchSpec struct {
+	Query   string
+	Lang    string
+	Country string
+	Count   int
+	Page    int
+	IDsOnly bool // if true apps will not parsed.
+}
+
+func (spec *SearchSpec) sanitize() {
+	if spec.Count <= 0 {
+		spec.Count = 50
+	}
+
+	if spec.Page <= 0 {
+		spec.Page = 1
+	}
+
+	if spec.Lang == "" {
+		spec.Lang = "en-us"
+	}
+
+	if spec.Country == "" {
+		spec.Country = "us"
+	}
+
+	spec.Lang = strings.ToLower(spec.Lang)
+	spec.Country = strings.ToLower(spec.Country)
+}
+
+func (spec *SearchSpec) Validate() error {
+	spec.sanitize()
+
+	if spec.Query == "" {
+		return fmt.Errorf("query is required")
+	}
+
+	return nil
+}
+
+func (spec SearchSpec) Encode() string {
+	values := url.Values{
+		"clientApplication": []string{"Software"},
+		"media":             []string{"software"},
+		"term":              []string{spec.Query},
+	}
+
+	return values.Encode()
 }

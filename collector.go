@@ -78,3 +78,12 @@ func (collector collector) List(ctx context.Context, spec ListSpec) ([]App, erro
 
 	return newApps(apps...), nil
 }
+
+func (collector collector) Search(ctx context.Context, spec SearchSpec) ([]App, error) {
+	apps, err := scraper.Search(ctx, collector.client, shared.SearchSpec(spec))
+	if err != nil {
+		return nil, err
+	}
+
+	return newApps(apps...), nil
+}

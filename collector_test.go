@@ -61,7 +61,7 @@ func Test_Collector(t *testing.T) {
 	ctx := context.Background()
 
 	t.Run("App", func(t *testing.T) {
-		app, err := collector.App(ctx, AppSpec{ID: id})
+		app, err := collector.App(ctx, AppSpec{ID: 1450306065})
 		if !assert.NoError(t, err) {
 			return
 		}
@@ -128,7 +128,7 @@ func Test_Collector(t *testing.T) {
 		checkApps(t, apps...)
 	})
 
-	t.Run("ListWithGategory", func(t *testing.T) {
+	t.Run("ListWithCategory", func(t *testing.T) {
 		apps, err := collector.List(ctx, ListSpec{Count: 10, Category: "games"})
 		if !assert.NoError(t, err) {
 			return
@@ -140,5 +140,20 @@ func Test_Collector(t *testing.T) {
 		for _, app := range apps {
 			assert.Equal(t, "games", strings.ToLower(app.PrimaryGenre))
 		}
+	})
+
+	t.Run("Search", func(t *testing.T) {
+		apps, err := collector.Search(ctx, SearchSpec{
+			Query: "netflix",
+			Count: 1,
+		})
+		if !assert.NoError(t, err) {
+			return
+		}
+
+		checkApps(t, apps...)
+
+		assert.Len(t, apps, 1)
+		assert.Equal(t, "com.netflix.Netflix", apps[0].AppID)
 	})
 }

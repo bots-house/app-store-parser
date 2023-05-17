@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"io"
 	"net/http"
+	"time"
 
 	"github.com/bots-house/app-store-parser/shared"
 )
@@ -68,9 +69,9 @@ func rawRequest(ctx context.Context, client shared.HTTPClient, spec requestSpec)
 		request.Header = spec.headers
 	}
 
-	response, err := client.Do(request)
+	response, err := repeat(client, request)
 	if err != nil {
-		return nil, fmt.Errorf("do request: %w", err)
+		return nil, err
 	}
 
 	defer response.Body.Close()
@@ -89,4 +90,21 @@ func rawRequest(ctx context.Context, client shared.HTTPClient, spec requestSpec)
 	}
 
 	return body, nil
+}
+
+func repeat(client shared.HTTPClient, request *http.Request) (*http.Response, error) {
+	response, err := client.Do(request)
+	if err != nil {
+		return nil, fmt.Errorf("do request: %w", err)
+	}
+
+	if response.StatusCode == http.StatusServiceUnavailable {
+		time.Sleep(3 * time.Second)
+		response, err = client.Do(request)
+		if err != nil {
+			return nil, fmt.Errorf("do request: %w", err)
+		}
+	}
+
+	return response, nil
 }
