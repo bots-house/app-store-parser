@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"io"
 	"net/http"
+	"strings"
 
 	"github.com/bots-house/app-store-parser/shared"
 )
@@ -89,4 +90,17 @@ func rawRequest(ctx context.Context, client shared.HTTPClient, spec requestSpec)
 	}
 
 	return body, nil
+}
+
+func getCountryHeader(country, separator string) string {
+	code, ok := countryMap[strings.ToLower(country)]
+	if !ok {
+		code = countryMap["us"]
+	}
+
+	if separator != "" {
+		code += "," + separator
+	}
+
+	return code
 }

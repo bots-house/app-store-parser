@@ -23,7 +23,7 @@ func Ratings(ctx context.Context, client shared.HTTPClient, spec shared.RatingsS
 	body, err := rawRequest(ctx, client, requestSpec{
 		url: fmt.Sprintf(ratingsURL, spec.Country, spec.ID),
 		headers: http.Header{
-			"X-Apple-Store-Front": []string{"143441,12"}, // todo: add country resolve
+			"X-Apple-Store-Front": []string{getCountryHeader(spec.Country, "12")},
 		},
 		params: url.Values{
 			"displayable-kind": []string{"11"},

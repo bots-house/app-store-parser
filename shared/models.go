@@ -175,3 +175,5 @@ func (spec *DeveloperSpec) Validate() error {
 
 	return nil
 }
+
+type ListSpec struct {}
