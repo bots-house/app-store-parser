@@ -44,7 +44,7 @@ func Similar(ctx context.Context, client shared.HTTPClient, spec shared.AppSpec)
 		return entry, true
 	})
 
-	appsSpec := newAppsSpec(spec).applyIDs(ids...)
+	appsSpec := appsSpecFromApp(spec).applyIDs(ids...)
 
 	apps, err := getApps(ctx, client, appsSpec)
 	if err != nil {

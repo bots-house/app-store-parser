@@ -92,3 +92,5 @@ type AppSpec shared.AppSpec
 
 type Ratings shared.Ratings
 type RatingsSpec shared.RatingsSpec
+
+type DeveloperSpec shared.DeveloperSpec

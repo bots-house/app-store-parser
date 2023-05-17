@@ -142,3 +142,36 @@ type Ratings struct {
 	Total     int64
 	Histogram map[int]int64
 }
+
+type DeveloperSpec struct {
+	ID      int64
+	Lang    string
+	Country string
+}
+
+func (spec DeveloperSpec) Encode() string {
+	values := url.Values{
+		"entity":  []string{"software"},
+		"country": []string{spec.Country},
+	}
+
+	values.Set("id", strconv.FormatInt(spec.ID, 10))
+
+	if spec.Lang != "" {
+		values.Set("lang", spec.Lang)
+	}
+
+	return values.Encode()
+}
+
+func (spec *DeveloperSpec) Validate() error {
+	if spec.Country == "" {
+		spec.Country = "us"
+	}
+
+	if spec.ID == 0 {
+		return fmt.Errorf("ids required")
+	}
+
+	return nil
+}

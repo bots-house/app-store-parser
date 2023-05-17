@@ -81,10 +81,23 @@ func (spec appsSpec) applyAppIDs(ids ...string) appsSpec {
 	return spec
 }
 
-func newAppsSpec(spec shared.AppSpec) appsSpec {
+func appsSpecFromApp(spec shared.AppSpec) appsSpec {
 	return appsSpec{
 		lang:    spec.Lang,
 		country: spec.Country,
 		ratings: spec.Ratings,
+	}
+}
+
+func appsSpecFromDev(spec shared.DeveloperSpec) appsSpec {
+	ids := make([]int64, 1)
+	if spec.ID != 0 {
+		ids[0] = spec.ID
+	}
+
+	return appsSpec{
+		ids:     ids,
+		country: spec.Country,
+		lang:    spec.Lang,
 	}
 }

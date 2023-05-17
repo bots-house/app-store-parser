@@ -10,7 +10,7 @@ import (
 )
 
 func App(ctx context.Context, client shared.HTTPClient, spec shared.AppSpec) (*shared.App, error) {
-	appsSpec := newAppsSpec(spec).applyIDs(spec.ID).applyAppIDs(spec.AppID)
+	appsSpec := appsSpecFromApp(spec).applyIDs(spec.ID).applyAppIDs(spec.AppID)
 
 	apps, err := getApps(ctx, client, appsSpec)
 	if err != nil {
@@ -48,7 +48,7 @@ func getApps(ctx context.Context, client shared.HTTPClient, spec appsSpec) ([]sh
 	}
 
 	if result.ResultCount == 0 || len(result.Results) == 0 {
-		return nil, fmt.Errorf("app not found")
+		return nil, fmt.Errorf("apps not found")
 	}
 
 	apps := shared.Map(result.Results, func(app shared.App) shared.App {

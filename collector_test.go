@@ -3,14 +3,10 @@ package asp
 import (
 	"context"
 	"fmt"
-	"net/http"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
 	"go.uber.org/multierr"
-
-	"github.com/bots-house/app-store-parser/internal/scraper"
-	"github.com/bots-house/app-store-parser/shared"
 )
 
 func checkApp(app *App) error {
@@ -107,9 +103,15 @@ func Test_Collector(t *testing.T) {
 		assert.NotEmpty(t, ratings.Total)
 		assert.NotEmpty(t, ratings.Histogram)
 	})
-}
 
-func Test_temp(t *testing.T) {
-	_, err := scraper.Ratings(context.TODO(), http.DefaultClient, shared.RatingsSpec{ID: 553834731})
-	assert.NoError(t, err)
+	t.Run("Developer", func(t *testing.T) {
+		apps, err := collector.Developer(ctx, DeveloperSpec{ID: 284882218})
+		if !assert.NoError(t, err) {
+			return
+		}
+
+		for _, app := range apps {
+			assert.NoError(t, checkApp(&app))
+		}
+	})
 }

@@ -60,3 +60,12 @@ func (collector collector) Ratings(ctx context.Context, spec RatingsSpec) (Ratin
 
 	return Ratings(ratings), nil
 }
+
+func (collector collector) Developer(ctx context.Context, spec DeveloperSpec) ([]App, error) {
+	apps, err := scraper.Developer(ctx, collector.client, shared.DeveloperSpec(spec))
+	if err != nil {
+		return nil, err
+	}
+
+	return newApps(apps...), nil
+}
