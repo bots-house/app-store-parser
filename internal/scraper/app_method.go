@@ -8,7 +8,18 @@ import (
 )
 
 func App(ctx context.Context, client shared.HTTPClient, spec shared.AppSpec) (*shared.App, error) {
-	if err := spec.Validate(); err != nil {
+	appsSpec := newAppsSpec(spec).applyIDs(spec.ID).applyAppIDs(spec.AppID)
+
+	apps, err := getApps(ctx, client, appsSpec)
+	if err != nil {
+		return nil, err
+	}
+
+	return &apps[0], nil
+}
+
+func getApps(ctx context.Context, client shared.HTTPClient, spec appsSpec) ([]shared.App, error) {
+	if err := spec.validate(); err != nil {
 		return nil, fmt.Errorf("validation: %w", err)
 	}
 
@@ -24,8 +35,14 @@ func App(ctx context.Context, client shared.HTTPClient, spec shared.AppSpec) (*s
 		return nil, fmt.Errorf("app not found")
 	}
 
-	app := result.Results[0]
-	app.Sanitize()
+	apps := shared.Map(result.Results, func(app shared.App) shared.App {
+		app.Sanitize()
+		return app
+	})
 
-	return &app, nil
+	apps = shared.Filter(apps, func(app shared.App) bool {
+		return app.WrapperType == "software"
+	})
+
+	return apps, nil
 }

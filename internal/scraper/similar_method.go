@@ -44,21 +44,11 @@ func Similar(ctx context.Context, client shared.HTTPClient, spec shared.AppSpec)
 		return entry, true
 	})
 
-	apps := shared.MapCheck(ids, func(id int64) (shared.App, bool) {
-		spec := spec
-		spec.ID = id
+	appsSpec := newAppsSpec(spec).applyIDs(ids...)
 
-		app, err := App(ctx, client, spec)
-		if err != nil {
-			log.Ctx(ctx).Error().Err(err).Int64("app_id", id).Msg("parse app failed")
-			return shared.App{}, false
-		}
-
-		return *app, true
-	})
-
-	if len(apps) == 0 {
-		return nil, fmt.Errorf("similar apps not found")
+	apps, err := getApps(ctx, client, appsSpec)
+	if err != nil {
+		return nil, err
 	}
 
 	return apps, nil

@@ -24,3 +24,17 @@ func MapCheck[I, O any, S ~[]I](slice S, fn func(I) (O, bool)) []O {
 
 	return result
 }
+
+func Filter[T any, S ~[]T](slice S, fn func(T) bool) S {
+	result := make(S, 0, len(slice))
+
+	for _, entry := range slice {
+		if !fn(entry) {
+			continue
+		}
+
+		result = append(result, entry)
+	}
+
+	return result
+}
