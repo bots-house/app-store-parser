@@ -40,6 +40,7 @@ type App struct {
 	AppleTVScreenshots    []string  `json:"apple_tv_screenshots"`
 	SupportedDevices      []string  `json:"supported_devices"`
 	Icon                  string    `json:"icon"`
+	Ratings               Ratings   `json:"ratings"`
 }
 
 func newApp(app *shared.App) *App {
@@ -77,6 +78,7 @@ func newApp(app *shared.App) *App {
 		AppleTVScreenshots:    app.AppleTVScreenshots,
 		SupportedDevices:      app.SupportedDevices,
 		Icon:                  app.Icon,
+		Ratings:               Ratings(app.Ratings),
 	}
 }
 
@@ -87,3 +89,6 @@ func newApps(apps ...shared.App) []App {
 }
 
 type AppSpec shared.AppSpec
+
+type Ratings shared.Ratings
+type RatingsSpec shared.RatingsSpec

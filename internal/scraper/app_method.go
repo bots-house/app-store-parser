@@ -4,6 +4,8 @@ import (
 	"context"
 	"fmt"
 
+	"github.com/rs/zerolog/log"
+
 	"github.com/bots-house/app-store-parser/shared"
 )
 
@@ -15,7 +17,21 @@ func App(ctx context.Context, client shared.HTTPClient, spec shared.AppSpec) (*s
 		return nil, err
 	}
 
-	return &apps[0], nil
+	app := &apps[0]
+
+	if !spec.Ratings {
+		return app, nil
+	}
+
+	ratings, err := Ratings(ctx, client, shared.RatingsSpec{ID: app.ID})
+	if err != nil {
+		log.Ctx(ctx).Error().Err(err).Msg("parse ratings")
+		return app, nil
+	}
+
+	app.Ratings = ratings
+
+	return app, nil
 }
 
 func getApps(ctx context.Context, client shared.HTTPClient, spec appsSpec) ([]shared.App, error) {

@@ -35,16 +35,29 @@ func (spec *requestSpec) validate() error {
 }
 
 func request[T any](ctx context.Context, client shared.HTTPClient, spec requestSpec) (result T, _ error) {
+	body, err := rawRequest(ctx, client, spec)
+	if err != nil {
+		return result, err
+	}
+
+	if err := json.Unmarshal(body, &result); err != nil {
+		return result, fmt.Errorf("decode: %w", err)
+	}
+
+	return result, nil
+}
+
+func rawRequest(ctx context.Context, client shared.HTTPClient, spec requestSpec) ([]byte, error) {
 	ctx, cancel := context.WithCancel(ctx)
 	defer cancel()
 
 	if err := spec.validate(); err != nil {
-		return result, fmt.Errorf("prepare request: %w", err)
+		return nil, fmt.Errorf("prepare request: %w", err)
 	}
 
 	request, err := http.NewRequestWithContext(ctx, spec.method, spec.url, http.NoBody)
 	if err != nil {
-		return result, fmt.Errorf("prepare request: %w", err)
+		return nil, fmt.Errorf("prepare request: %w", err)
 	}
 
 	if spec.params != nil {
@@ -57,27 +70,23 @@ func request[T any](ctx context.Context, client shared.HTTPClient, spec requestS
 
 	response, err := client.Do(request)
 	if err != nil {
-		return result, fmt.Errorf("do request: %w", err)
+		return nil, fmt.Errorf("do request: %w", err)
 	}
 
 	defer response.Body.Close()
 
 	if response.StatusCode != http.StatusOK {
-		return result, fmt.Errorf("unexpected code: %d", response.StatusCode)
+		return nil, fmt.Errorf("unexpected code: %d", response.StatusCode)
 	}
 
 	body, err := io.ReadAll(response.Body)
 	if err != nil {
-		return result, fmt.Errorf("read body: %w", err)
+		return nil, fmt.Errorf("read body: %w", err)
 	}
 
 	if spec.prepareResponse != nil {
 		body = spec.prepareResponse(body)
 	}
 
-	if err := json.Unmarshal(body, &result); err != nil {
-		return result, fmt.Errorf("decode: %w", err)
-	}
-
-	return result, nil
+	return body, nil
 }

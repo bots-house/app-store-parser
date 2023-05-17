@@ -51,3 +51,12 @@ func (collector collector) Similar(ctx context.Context, spec AppSpec) ([]App, er
 
 	return newApps(apps...), nil
 }
+
+func (collector collector) Ratings(ctx context.Context, spec RatingsSpec) (Ratings, error) {
+	ratings, err := scraper.Ratings(ctx, collector.client, shared.RatingsSpec(spec))
+	if err != nil {
+		return Ratings{}, err
+	}
+
+	return Ratings(ratings), nil
+}

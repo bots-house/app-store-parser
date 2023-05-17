@@ -12,6 +12,7 @@ import (
 const (
 	lookupURL  = "https://itunes.apple.com/lookup"
 	similarURL = "https://itunes.apple.com/us/app/app/id"
+	ratingsURL = "https://itunes.apple.com/%s/customer-reviews/id%d"
 )
 
 type lookupResponse[T any] struct {

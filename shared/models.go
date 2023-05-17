@@ -47,7 +47,8 @@ type App struct {
 	ArtworkURL60  string `json:"artworkUrl60"`
 
 	// Tech fields
-	WrapperType string `json:"wrapperType"`
+	WrapperType string  `json:"wrapperType"`
+	Ratings     Ratings `json:"-"`
 }
 
 func (app *App) Sanitize() {
@@ -82,7 +83,7 @@ func (spec *AppSpec) sanitize() {
 	}
 }
 
-func (spec AppSpec) Validate() error {
+func (spec *AppSpec) Validate() error {
 	spec.sanitize()
 
 	if spec.ID == 0 && spec.AppID == "" {
@@ -113,4 +114,31 @@ func (spec AppSpec) Encode() string {
 	}
 
 	return values.Encode()
+}
+
+type RatingsSpec struct {
+	ID      int64
+	Lang    string
+	Country string
+}
+
+func (spec *RatingsSpec) sanitize() {
+	if spec.Country == "" {
+		spec.Country = "us"
+	}
+}
+
+func (spec *RatingsSpec) Validate() error {
+	spec.sanitize()
+
+	if spec.ID == 0 {
+		return fmt.Errorf("id required")
+	}
+
+	return nil
+}
+
+type Ratings struct {
+	Total     int64
+	Histogram map[int]int64
 }

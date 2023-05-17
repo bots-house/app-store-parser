@@ -3,10 +3,14 @@ package asp
 import (
 	"context"
 	"fmt"
+	"net/http"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
 	"go.uber.org/multierr"
+
+	"github.com/bots-house/app-store-parser/internal/scraper"
+	"github.com/bots-house/app-store-parser/shared"
 )
 
 func checkApp(app *App) error {
@@ -49,11 +53,12 @@ func checkApp(app *App) error {
 
 func Test_Collector(t *testing.T) {
 	collector := New()
+	id := int64(553834731)
 
 	ctx := context.Background()
 
 	t.Run("App", func(t *testing.T) {
-		app, err := collector.App(ctx, AppSpec{ID: 553834731})
+		app, err := collector.App(ctx, AppSpec{ID: id})
 		if !assert.NoError(t, err) {
 			return
 		}
@@ -61,8 +66,19 @@ func Test_Collector(t *testing.T) {
 		assert.NoError(t, checkApp(app))
 	})
 
+	t.Run("App with ratings", func(t *testing.T) {
+		app, err := collector.App(ctx, AppSpec{ID: id, Ratings: true})
+		if !assert.NoError(t, err) {
+			return
+		}
+
+		assert.NoError(t, checkApp(app))
+		assert.NotEmpty(t, app.Ratings.Total)
+		assert.NotEmpty(t, app.Ratings.Histogram)
+	})
+
 	t.Run("Similar", func(t *testing.T) {
-		apps, err := collector.Similar(ctx, AppSpec{ID: 553834731})
+		apps, err := collector.Similar(ctx, AppSpec{ID: id})
 		if !assert.NoError(t, err) {
 			return
 		}
@@ -71,4 +87,19 @@ func Test_Collector(t *testing.T) {
 			assert.NoError(t, checkApp(&app))
 		}
 	})
+
+	t.Run("Ratings", func(t *testing.T) {
+		ratings, err := collector.Ratings(ctx, RatingsSpec{ID: id})
+		if !assert.NoError(t, err) {
+			return
+		}
+
+		assert.NotEmpty(t, ratings.Total)
+		assert.NotEmpty(t, ratings.Histogram)
+	})
+}
+
+func Test_temp(t *testing.T) {
+	_, err := scraper.Ratings(context.TODO(), http.DefaultClient, shared.RatingsSpec{ID: 553834731})
+	assert.NoError(t, err)
 }
