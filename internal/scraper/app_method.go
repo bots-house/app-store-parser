@@ -10,6 +10,10 @@ import (
 )
 
 func App(ctx context.Context, client shared.HTTPClient, spec shared.AppSpec) (*shared.App, error) {
+	if err := spec.Validate(); err != nil {
+		return nil, fmt.Errorf("validation: %w", err)
+	}
+
 	appsSpec := appsSpecFromApp(spec).applyIDs(spec.ID).applyAppIDs(spec.AppID)
 
 	apps, err := getApps(ctx, client, appsSpec)
@@ -35,10 +39,6 @@ func App(ctx context.Context, client shared.HTTPClient, spec shared.AppSpec) (*s
 }
 
 func getApps(ctx context.Context, client shared.HTTPClient, spec appsSpec) ([]shared.App, error) {
-	if err := spec.validate(); err != nil {
-		return nil, fmt.Errorf("validation: %w", err)
-	}
-
 	result, err := request[lookupResponse[shared.App]](ctx, client, requestSpec{
 		url:    lookupURL,
 		params: spec,

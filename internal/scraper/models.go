@@ -13,6 +13,7 @@ const (
 	lookupURL  = "https://itunes.apple.com/lookup"
 	similarURL = "https://itunes.apple.com/us/app/app/id"
 	ratingsURL = "https://itunes.apple.com/%s/customer-reviews/id%d"
+	listURL    = "http://ax.itunes.apple.com/WebObjects/MZStoreServices.woa/ws/RSS/%s/%s/limit=%d/json"
 )
 
 type lookupResponse[T any] struct {

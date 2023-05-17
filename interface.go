@@ -7,4 +7,5 @@ type Collector interface {
 	Similar(context.Context, AppSpec) ([]App, error)
 	Ratings(context.Context, RatingsSpec) (Ratings, error)
 	Developer(context.Context, DeveloperSpec) ([]App, error)
+	List(context.Context, ListSpec) ([]App, error)
 }

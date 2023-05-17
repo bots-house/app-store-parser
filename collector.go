@@ -69,3 +69,12 @@ func (collector collector) Developer(ctx context.Context, spec DeveloperSpec) ([
 
 	return newApps(apps...), nil
 }
+
+func (collector collector) List(ctx context.Context, spec ListSpec) ([]App, error) {
+	apps, err := scraper.List(ctx, collector.client, shared.ListSpec(spec))
+	if err != nil {
+		return nil, err
+	}
+
+	return newApps(apps...), nil
+}

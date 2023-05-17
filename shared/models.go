@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"net/url"
 	"strconv"
+	"strings"
 	"time"
 )
 
@@ -90,6 +91,10 @@ func (spec *AppSpec) Validate() error {
 		return fmt.Errorf("id or app_id required")
 	}
 
+	if !In(spec.Country, Keys(countryMap)...) {
+		return fmt.Errorf("invalid country")
+	}
+
 	return nil
 }
 
@@ -135,6 +140,10 @@ func (spec *RatingsSpec) Validate() error {
 		return fmt.Errorf("id required")
 	}
 
+	if !In(spec.Country, Keys(countryMap)...) {
+		return fmt.Errorf("invalid country")
+	}
+
 	return nil
 }
 
@@ -173,7 +182,67 @@ func (spec *DeveloperSpec) Validate() error {
 		return fmt.Errorf("ids required")
 	}
 
+	if !In(spec.Country, Keys(countryMap)...) {
+		return fmt.Errorf("invalid country")
+	}
+
 	return nil
 }
 
-type ListSpec struct {}
+type ListSpec struct {
+	Count      int
+	Country    string
+	Collection string
+	Category   string
+}
+
+func (spec *ListSpec) sanitize() {
+	if spec.Collection == "" {
+		spec.Collection = "TOP_FREE_IOS"
+	}
+
+	if spec.Count == 0 {
+		spec.Count = 50
+	}
+
+	if spec.Country == "" {
+		spec.Country = "us"
+	}
+
+	spec.Country = strings.ToLower(spec.Country)
+	spec.Category = strings.ToUpper(spec.Category)
+	spec.Collection = strings.ToUpper(spec.Collection)
+}
+
+func (spec *ListSpec) Validate() error {
+	spec.sanitize()
+
+	if spec.Count > 200 {
+		return fmt.Errorf("invalid count")
+	}
+
+	if !In(spec.Country, Keys(countryMap)...) {
+		return fmt.Errorf("invalid country")
+	}
+
+	if spec.Category != "" && !In(spec.Category, Keys(categoryMap)...) {
+		return fmt.Errorf("invalid category")
+	}
+
+	if !In(spec.Collection, Keys(collectionMap)...) {
+		return fmt.Errorf("invalid collection")
+	}
+
+	return nil
+}
+
+func (spec ListSpec) Path(path string) string {
+	collection := collectionMap[spec.Collection]
+	category := ""
+	if spec.Category != "" {
+		categoryNumber := strconv.FormatInt(int64(categoryMap[spec.Category]), 10)
+		category = "/genre=" + categoryNumber
+	}
+
+	return fmt.Sprintf(path, collection, category, spec.Count)
+}

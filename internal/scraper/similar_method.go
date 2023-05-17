@@ -26,12 +26,12 @@ func Similar(ctx context.Context, client shared.HTTPClient, spec shared.AppSpec)
 		url:    similarURL + similarID,
 		params: spec,
 		headers: http.Header{
-			"X-Apple-Store-Front": []string{getCountryHeader(spec.Country, "32")},
+			"X-Apple-Store-Front": []string{shared.GetCountryHeader(spec.Country, "32")},
 		},
 		prepareResponse: parseSimilarResponse,
 	})
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("similar ids not found: %w", err)
 	}
 
 	ids := shared.MapCheck(result, func(id string) (int64, bool) {

@@ -3,6 +3,7 @@ package asp
 import (
 	"context"
 	"fmt"
+	"strings"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
@@ -47,6 +48,12 @@ func checkApp(app *App) error {
 	return multierr.Combine(errs...)
 }
 
+func checkApps(t *testing.T, apps ...App) {
+	for idx := range apps {
+		assert.NoError(t, checkApp(&apps[idx]))
+	}
+}
+
 func Test_Collector(t *testing.T) {
 	collector := New()
 	id := int64(553834731)
@@ -72,7 +79,7 @@ func Test_Collector(t *testing.T) {
 		assert.NoError(t, checkApp(app))
 	})
 
-	t.Run("App with ratings", func(t *testing.T) {
+	t.Run("AppWithRatings", func(t *testing.T) {
 		app, err := collector.App(ctx, AppSpec{ID: id, Ratings: true})
 		if !assert.NoError(t, err) {
 			return
@@ -89,9 +96,7 @@ func Test_Collector(t *testing.T) {
 			return
 		}
 
-		for _, app := range apps {
-			assert.NoError(t, checkApp(&app))
-		}
+		checkApps(t, apps...)
 	})
 
 	t.Run("Ratings", func(t *testing.T) {
@@ -110,8 +115,30 @@ func Test_Collector(t *testing.T) {
 			return
 		}
 
+		checkApps(t, apps...)
+	})
+
+	t.Run("ListWithCount", func(t *testing.T) {
+		apps, err := collector.List(ctx, ListSpec{Count: 10})
+		if !assert.NoError(t, err) {
+			return
+		}
+
+		assert.Len(t, apps, 10)
+		checkApps(t, apps...)
+	})
+
+	t.Run("ListWithGategory", func(t *testing.T) {
+		apps, err := collector.List(ctx, ListSpec{Count: 10, Category: "games"})
+		if !assert.NoError(t, err) {
+			return
+		}
+
+		assert.Len(t, apps, 10)
+		checkApps(t, apps...)
+
 		for _, app := range apps {
-			assert.NoError(t, checkApp(&app))
+			assert.Equal(t, "games", strings.ToLower(app.PrimaryGenre))
 		}
 	})
 }

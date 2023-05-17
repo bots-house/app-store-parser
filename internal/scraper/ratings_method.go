@@ -23,14 +23,14 @@ func Ratings(ctx context.Context, client shared.HTTPClient, spec shared.RatingsS
 	body, err := rawRequest(ctx, client, requestSpec{
 		url: fmt.Sprintf(ratingsURL, spec.Country, spec.ID),
 		headers: http.Header{
-			"X-Apple-Store-Front": []string{getCountryHeader(spec.Country, "12")},
+			"X-Apple-Store-Front": []string{shared.GetCountryHeader(spec.Country, "12")},
 		},
 		params: url.Values{
 			"displayable-kind": []string{"11"},
 		},
 	})
 	if err != nil {
-		return shared.Ratings{}, err
+		return shared.Ratings{}, fmt.Errorf("ratings data not found: %w", err)
 	}
 
 	return parseRatings(body)
