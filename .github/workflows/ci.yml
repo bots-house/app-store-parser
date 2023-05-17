@@ -1,0 +1,65 @@
+name: CI
+
+on:
+  pull_request:
+  push:
+    branches:
+      - main
+
+
+
+jobs:
+  lint:
+    name: Lint
+    runs-on: ubuntu-latest
+    steps:
+      - name: Install Go
+        uses: actions/setup-go@v4
+        with:
+          go-version: "1.20"
+
+      - name: Checkout
+        uses: actions/checkout@v3
+
+      - name: Lint
+        uses: golangci/golangci-lint-action@v3
+        with:
+          version: v1.52
+
+  test:
+    name: Test
+    if: ${{ github.event.head_commit.message != 'Initial commit' }}
+    runs-on: ubuntu-latest
+    steps:
+      - name: Install Go
+        uses: actions/setup-go@v4
+        with:
+          go-version: "1.20"
+
+      - name: Checkout
+        uses: actions/checkout@v3
+
+      - name: Restore Cache
+        uses: actions/cache@v3
+        with:
+          # In order:
+          # * Module download cache
+          # * Build cache (Linux)
+          # * Build cache (Mac)
+          # * Build cache (Windows)
+          path: |
+            ~/go/pkg/mod
+            ~/.cache/go-build
+            ~/Library/Caches/go-build
+            %LocalAppData%\go-build
+          key: ${{ runner.os }}-go-${{ hashFiles('**/go.sum') }}
+          restore-keys: |
+            ${{ runner.os }}-go-
+
+      - name: Test
+        run: go test -race -covermode=atomic -coverprofile=coverage.txt ./...
+
+      - name: Upload coverage
+        uses: codecov/codecov-action@v3
+        with:
+          token: ${{ secrets.CODECOV_TOKEN }} # not required for public repos
