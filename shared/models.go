@@ -123,7 +123,6 @@ func (spec AppSpec) Encode() string {
 
 type RatingsSpec struct {
 	ID      int64
-	Lang    string
 	Country string
 }
 
@@ -148,8 +147,8 @@ func (spec *RatingsSpec) Validate() error {
 }
 
 type Ratings struct {
-	Total     int64
-	Histogram map[int]int64
+	Total     int64         `json:"total,omitempty"`
+	Histogram map[int]int64 `json:"histogram,omitempty"`
 }
 
 type DeveloperSpec struct {
