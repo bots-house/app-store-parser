@@ -54,6 +54,46 @@ func checkApps(t *testing.T, apps ...App) {
 	}
 }
 
+func checkReview(review *Review) error {
+	errs := make([]error, 0, 9)
+
+	if review.ID == "" {
+		errs = append(errs, fmt.Errorf("id missing"))
+	}
+
+	if review.Title == "" {
+		errs = append(errs, fmt.Errorf("title missing"))
+	}
+
+	if review.Content == "" {
+		errs = append(errs, fmt.Errorf("content missing"))
+	}
+
+	if review.Score == "" {
+		errs = append(errs, fmt.Errorf("score missing"))
+	}
+
+	if review.Version == "" {
+		errs = append(errs, fmt.Errorf("version missing"))
+	}
+
+	if review.UserName == "" {
+		errs = append(errs, fmt.Errorf("user_name missing"))
+	}
+
+	if review.UserURL == "" {
+		errs = append(errs, fmt.Errorf("user_url missing"))
+	}
+
+	return multierr.Combine(errs...)
+}
+
+func checkReviews(t *testing.T, reviews ...Review) {
+	for idx := range reviews {
+		assert.NoError(t, checkReview(&reviews[idx]))
+	}
+}
+
 func Test_Collector(t *testing.T) {
 	collector := New()
 	id := int64(553834731)
@@ -61,7 +101,7 @@ func Test_Collector(t *testing.T) {
 	ctx := context.Background()
 
 	t.Run("App", func(t *testing.T) {
-		app, err := collector.App(ctx, AppSpec{ID: 1450306065})
+		app, err := collector.App(ctx, AppSpec{ID: id})
 		if !assert.NoError(t, err) {
 			return
 		}
@@ -155,5 +195,14 @@ func Test_Collector(t *testing.T) {
 
 		assert.Len(t, apps, 1)
 		assert.Equal(t, "com.netflix.Netflix", apps[0].AppID)
+	})
+
+	t.Run("Reviews", func(t *testing.T) {
+		reviews, err := collector.Reviews(ctx, ReviewsSpec{ID: id})
+		if !assert.NoError(t, err) {
+			return
+		}
+
+		checkReviews(t, reviews...)
 	})
 }

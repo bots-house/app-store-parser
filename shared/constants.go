@@ -206,3 +206,8 @@ var categoryMap = map[string]int{
 	"UTILITIES":                  6002,
 	"WEATHER":                    6001,
 }
+
+var sortMap = map[string]string{
+	"RECENT":  "mostRecent",
+	"HELPFUL": "mostHelpful",
+}

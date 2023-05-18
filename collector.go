@@ -87,3 +87,14 @@ func (collector collector) Search(ctx context.Context, spec SearchSpec) ([]App, 
 
 	return newApps(apps...), nil
 }
+
+func (collector collector) Reviews(ctx context.Context, spec ReviewsSpec) ([]Review, error) {
+	reviews, err := scraper.Reviews(ctx, collector.client, shared.ReviewsSpec(spec))
+	if err != nil {
+		return nil, err
+	}
+
+	return shared.Map(reviews, func(review shared.Review) Review {
+		return Review(review)
+	}), nil
+}

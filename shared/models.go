@@ -296,3 +296,58 @@ func (spec SearchSpec) Encode() string {
 
 	return values.Encode()
 }
+
+type Review struct {
+	ID       string    `json:"id"`
+	Title    string    `json:"title"`
+	Content  string    `json:"content"`
+	UserName string    `json:"user_name"`
+	UserURL  string    `json:"user_url"`
+	Version  string    `json:"version"`
+	Score    string    `json:"score"`
+	URL      string    `json:"url"`
+	Updated  time.Time `json:"updated"`
+}
+
+type ReviewsSpec struct {
+	ID      int64
+	AppID   string
+	Page    int
+	Sort    string
+	Country string
+}
+
+func (spec *ReviewsSpec) sanitize() {
+	if spec.Page <= 0 {
+		spec.Page = 1
+	}
+
+	if spec.Sort == "" {
+		spec.Sort = "RECENT"
+	}
+
+	if spec.Country == "" {
+		spec.Country = "us"
+	}
+
+	spec.Country = strings.ToLower(spec.Country)
+	spec.Sort = strings.ToUpper(spec.Sort)
+}
+
+func (spec *ReviewsSpec) Validate() error {
+	spec.sanitize()
+
+	if spec.ID == 0 && spec.AppID == "" {
+		return fmt.Errorf("id or app_id required")
+	}
+
+	if !In(spec.Sort, Keys(sortMap)...) {
+		return fmt.Errorf("invalid sort")
+	}
+
+	return nil
+}
+
+func (spec ReviewsSpec) Path(path string) string {
+	return fmt.Sprintf(path, spec.Country, spec.Page, spec.ID, sortMap[spec.Sort])
+}

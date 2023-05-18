@@ -9,4 +9,5 @@ type Collector interface {
 	Developer(context.Context, DeveloperSpec) ([]App, error)
 	List(context.Context, ListSpec) ([]App, error)
 	Search(context.Context, SearchSpec) ([]App, error)
+	Reviews(context.Context, ReviewsSpec) ([]Review, error)
 }

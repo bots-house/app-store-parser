@@ -15,7 +15,7 @@ func List(ctx context.Context, client shared.HTTPClient, spec shared.ListSpec) (
 		return nil, fmt.Errorf("validation: %w", err)
 	}
 
-	result, err := request[appListResult](ctx, client, requestSpec{
+	result, err := request[appListResult[[]feedEntryLink]](ctx, client, requestSpec{
 		url: spec.Path(listURL),
 	})
 	if err != nil {
@@ -30,8 +30,8 @@ func List(ctx context.Context, client shared.HTTPClient, spec shared.ListSpec) (
 	return getApps(ctx, client, appsSpec)
 }
 
-func parseListResult(result appListResult) (appsSpec, error) {
-	ids := shared.MapCheck(result.Feed.Entry, func(entry feedEntry) (int64, bool) {
+func parseListResult(result appListResult[[]feedEntryLink]) (appsSpec, error) {
+	ids := shared.MapCheck(result.Feed.Entry, func(entry feedEntry[[]feedEntryLink]) (int64, bool) {
 		id, err := strconv.ParseInt(entry.ID.Attributes.ID, 10, strconv.IntSize)
 		if err != nil {
 			log.Error().Err(err).Msg("id not found")
