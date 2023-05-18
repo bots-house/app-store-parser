@@ -10,4 +10,5 @@ type Collector interface {
 	List(context.Context, ListSpec) ([]App, error)
 	Search(context.Context, SearchSpec) ([]App, error)
 	Reviews(context.Context, ReviewsSpec) ([]Review, error)
+	Privacy(context.Context, int64) ([]Privacy, error)
 }

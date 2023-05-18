@@ -98,3 +98,14 @@ func (collector collector) Reviews(ctx context.Context, spec ReviewsSpec) ([]Rev
 		return Review(review)
 	}), nil
 }
+
+func (collector collector) Privacy(ctx context.Context, id int64) ([]Privacy, error) {
+	privacies, err := scraper.Privacy(ctx, collector.client, id)
+	if err != nil {
+		return nil, err
+	}
+
+	return shared.Map(privacies, func(entry shared.Privacy) Privacy {
+		return Privacy(entry)
+	}), nil
+}

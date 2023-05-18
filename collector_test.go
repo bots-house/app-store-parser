@@ -205,4 +205,13 @@ func Test_Collector(t *testing.T) {
 
 		checkReviews(t, reviews...)
 	})
+
+	t.Run("Privacy", func(t *testing.T) {
+		privacies, err := collector.Privacy(ctx, id)
+		if !assert.NoError(t, err) {
+			return
+		}
+
+		assert.NotEmpty(t, privacies)
+	})
 }

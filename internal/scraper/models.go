@@ -1,7 +1,6 @@
 package scraper
 
 import (
-	"fmt"
 	"net/url"
 	"strconv"
 	"strings"
@@ -10,12 +9,14 @@ import (
 )
 
 const (
-	lookupURL  = "https://itunes.apple.com/lookup"
-	similarURL = "https://itunes.apple.com/us/app/app/id"
-	ratingsURL = "https://itunes.apple.com/%s/customer-reviews/id%d"
-	listURL    = "http://ax.itunes.apple.com/WebObjects/MZStoreServices.woa/ws/RSS/%s/%s/limit=%d/json"
-	searchURL  = "https://search.itunes.apple.com/WebObjects/MZStore.woa/wa/search"
-	reviewsURL = "https://itunes.apple.com/%s/rss/customerreviews/page=%d/id=%d/sortby=%s/json"
+	lookupURL      = "https://itunes.apple.com/lookup"
+	similarURL     = "https://itunes.apple.com/us/app/app/id"
+	ratingsURL     = "https://itunes.apple.com/%s/customer-reviews/id%d"
+	listURL        = "http://ax.itunes.apple.com/WebObjects/MZStoreServices.woa/ws/RSS/%s/%s/limit=%d/json"
+	searchURL      = "https://search.itunes.apple.com/WebObjects/MZStore.woa/wa/search"
+	reviewsURL     = "https://itunes.apple.com/%s/rss/customerreviews/page=%d/id=%d/sortby=%s/json"
+	appTokenURL    = "https://apps.apple.com/us/app/id"
+	appsPrivacyURL = "https://amp-api.apps.apple.com/v1/catalog/US/apps/"
 )
 
 type lookupResponse[T any] struct {
@@ -54,18 +55,6 @@ func (spec appsSpec) Encode() string {
 	}
 
 	return values.Encode()
-}
-
-func (spec *appsSpec) validate() error {
-	if spec.country == "" {
-		spec.country = "us"
-	}
-
-	if len(spec.ids) == 0 && len(spec.appIDs) == 0 {
-		return fmt.Errorf("ids required")
-	}
-
-	return nil
 }
 
 func (spec appsSpec) applyIDs(ids ...int64) appsSpec {

@@ -97,3 +97,4 @@ type ListSpec shared.ListSpec
 type SearchSpec shared.SearchSpec
 type Review shared.Review
 type ReviewsSpec shared.ReviewsSpec
+type Privacy shared.Privacy

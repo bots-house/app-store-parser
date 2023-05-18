@@ -351,3 +351,23 @@ func (spec *ReviewsSpec) Validate() error {
 func (spec ReviewsSpec) Path(path string) string {
 	return fmt.Sprintf(path, spec.Country, spec.Page, spec.ID, sortMap[spec.Sort])
 }
+
+type Privacy struct {
+	Categories  []DataCategory `json:"categories"`
+	Description string         `json:"description"`
+	Identifier  string         `json:"identifier"`
+	Type        string         `json:"type"`
+	Purposes    []Purpose      `json:"purposes"`
+}
+
+type DataCategory struct {
+	Category   string   `json:"category"`
+	Types      []string `json:"types"`
+	Identifier string   `json:"identifier"`
+}
+
+type Purpose struct {
+	Categories []DataCategory `json:"categories"`
+	Identifier string         `json:"identifier"`
+	Purpose    string         `json:"purpose"`
+}
