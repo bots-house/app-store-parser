@@ -8,6 +8,8 @@ import (
 
 	"github.com/stretchr/testify/assert"
 	"go.uber.org/multierr"
+
+	"github.com/bots-house/app-store-parser/shared"
 )
 
 func checkApp(app *App) error {
@@ -213,5 +215,18 @@ func Test_Collector(t *testing.T) {
 		}
 
 		assert.NotEmpty(t, privacies)
+	})
+
+	t.Run("Suggest", func(t *testing.T) {
+		result, err := collector.Suggest(ctx, SuggestSpec{Query: "p"})
+		if !assert.NoError(t, err) {
+			return
+		}
+
+		assert.NotEmpty(t, result)
+
+		assert.True(t, shared.In("paypal", shared.Map(result, func(suggest Suggest) string {
+			return suggest.Term
+		})...))
 	})
 }

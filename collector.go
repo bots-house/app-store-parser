@@ -109,3 +109,14 @@ func (collector collector) Privacy(ctx context.Context, id int64) ([]Privacy, er
 		return Privacy(entry)
 	}), nil
 }
+
+func (collector collector) Suggest(ctx context.Context, spec SuggestSpec) ([]Suggest, error) {
+	result, err := scraper.Suggest(ctx, collector.client, shared.SuggestSpec(spec))
+	if err != nil {
+		return nil, err
+	}
+
+	return shared.Map(result, func(suggest shared.Suggest) Suggest {
+		return Suggest(suggest)
+	}), nil
+}

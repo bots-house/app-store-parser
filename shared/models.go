@@ -371,3 +371,40 @@ type Purpose struct {
 	Identifier string         `json:"identifier"`
 	Purpose    string         `json:"purpose"`
 }
+
+type Suggest struct {
+	Term string `json:"term"`
+	URL  string `json:"url"`
+}
+
+type SuggestSpec struct {
+	Query   string
+	Country string
+}
+
+func (spec *SuggestSpec) sanitize() {
+	if spec.Country == "" {
+		spec.Country = "us"
+	}
+
+	spec.Country = strings.ToLower(spec.Country)
+}
+
+func (spec *SuggestSpec) Validate() error {
+	spec.sanitize()
+
+	if spec.Query == "" {
+		return fmt.Errorf("query required")
+	}
+
+	return nil
+}
+
+func (spec SuggestSpec) Encode() string {
+	values := url.Values{
+		"clientApplication": []string{"Software"},
+		"term":              []string{spec.Query},
+	}
+
+	return values.Encode()
+}

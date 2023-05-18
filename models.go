@@ -98,3 +98,5 @@ type SearchSpec shared.SearchSpec
 type Review shared.Review
 type ReviewsSpec shared.ReviewsSpec
 type Privacy shared.Privacy
+type Suggest shared.Suggest
+type SuggestSpec shared.SuggestSpec
