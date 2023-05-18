@@ -9,7 +9,7 @@ import (
 type App struct {
 	ID                    int64     `json:"id"`
 	AppID                 string    `json:"app_id,omitempty"`
-	Title                 string    `json:"title",omitempty`
+	Title                 string    `json:"title,omitempty"`
 	URL                   string    `json:"url,omitempty"`
 	Description           string    `json:"description,omitempty"`
 	Genres                []string  `json:"genres,omitempty"`
