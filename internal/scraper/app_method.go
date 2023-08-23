@@ -60,5 +60,9 @@ func getApps(ctx context.Context, client shared.HTTPClient, spec appsSpec) ([]sh
 		return app.WrapperType == "software"
 	})
 
+	if len(apps) == 0 {
+		return nil, fmt.Errorf("apps not found")
+	}
+
 	return apps, nil
 }
