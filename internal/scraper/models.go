@@ -18,9 +18,9 @@ const (
 	appTokenURL       = "https://apps.apple.com/us/app/id"
 	appsPrivacyURL    = "https://amp-api.apps.apple.com/v1/catalog/US/apps/"
 	suggestURL        = "https://search.itunes.apple.com/WebObjects/MZSearchHints.woa/wa/hints"
-	collyScrapperLink = "https://apps.apple.com/us/app/id%d"
+	inAppPurchaseLink = "https://apps.apple.com/us/app/id%d"
 
-	collyScrapperSelector = ".app-header__list__item--in-app-purchase"
+	inAppPurchaseSelector = ".app-header__list__item--in-app-purchase"
 )
 
 type lookupResponse[T any] struct {

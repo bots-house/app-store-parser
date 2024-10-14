@@ -96,6 +96,7 @@ func checkReviews(t *testing.T, reviews ...Review) {
 	}
 }
 
+// TODO: check functionality some tests fail
 func Test_Collector(t *testing.T) {
 	collector := New()
 	id := int64(553834731)

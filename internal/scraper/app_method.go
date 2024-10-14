@@ -3,8 +3,9 @@ package scraper
 import (
 	"context"
 	"fmt"
+	"net/http"
 
-	"github.com/gocolly/colly/v2"
+	"github.com/PuerkitoBio/goquery"
 	"github.com/rs/zerolog/log"
 
 	"github.com/bots-house/app-store-parser/shared"
@@ -61,16 +62,13 @@ func getApps(ctx context.Context, client shared.HTTPClient, spec appsSpec) ([]sh
 		return app.WrapperType == "software"
 	})
 
-	scrapper := colly.NewCollector()
-
 	apps = shared.Map(apps, func(app shared.App) shared.App {
-		scrapper.OnHTML(collyScrapperSelector, func(h *colly.HTMLElement) {
-			if h.Text != "" {
-				app.InAppPurchase = true
-			}
-		})
+		ok, err := foundInAppPurchase(ctx, client, app.ID)
+		if err != nil {
+			return app
+		}
 
-		_ = scrapper.Visit(fmt.Sprintf(collyScrapperLink, app.ID))
+		app.InAppPurchase = ok
 
 		return app
 	})
@@ -80,4 +78,27 @@ func getApps(ctx context.Context, client shared.HTTPClient, spec appsSpec) ([]sh
 	}
 
 	return apps, nil
+}
+
+func foundInAppPurchase(ctx context.Context, client shared.HTTPClient, appID int64) (bool, error) {
+	req, err := http.NewRequestWithContext(ctx, http.MethodGet, fmt.Sprintf(inAppPurchaseLink, appID), http.NoBody)
+	if err != nil {
+		return false, err
+	}
+
+	resp, err := client.Do(req)
+	if err != nil {
+		return false, err
+	}
+
+	defer resp.Body.Close()
+
+	doc, err := goquery.NewDocumentFromReader(resp.Body)
+	if err != nil {
+		return false, err
+	}
+
+	text := doc.Find(inAppPurchaseSelector).Text()
+
+	return text != "", nil
 }

@@ -50,7 +50,7 @@ func parseRatings(body []byte) (shared.Ratings, error) {
 		log.Error().Err(err).Msg("ratings not found")
 	}
 
-	ratings := doc.Find(".vote .total").Map(func(i int, s *goquery.Selection) string {
+	ratings := doc.Find(".vote .total").Map(func(_ int, s *goquery.Selection) string {
 		return s.Text()
 	})
 

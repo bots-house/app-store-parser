@@ -50,7 +50,7 @@ type App struct {
 	// Tech fields
 	WrapperType   string  `json:"wrapperType"`
 	Ratings       Ratings `json:"-"`
-	InAppPurchase bool    `json:"-`
+	InAppPurchase bool    `json:"-"`
 }
 
 func (app *App) Sanitize() {
