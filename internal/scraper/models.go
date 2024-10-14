@@ -9,15 +9,18 @@ import (
 )
 
 const (
-	lookupURL      = "https://itunes.apple.com/lookup"
-	similarURL     = "https://itunes.apple.com/us/app/app/id"
-	ratingsURL     = "https://itunes.apple.com/%s/customer-reviews/id%d"
-	listURL        = "http://ax.itunes.apple.com/WebObjects/MZStoreServices.woa/ws/RSS/%s/%s/limit=%d/json"
-	searchURL      = "https://search.itunes.apple.com/WebObjects/MZStore.woa/wa/search"
-	reviewsURL     = "https://itunes.apple.com/%s/rss/customerreviews/page=%d/id=%d/sortby=%s/json"
-	appTokenURL    = "https://apps.apple.com/us/app/id"
-	appsPrivacyURL = "https://amp-api.apps.apple.com/v1/catalog/US/apps/"
-	suggestURL     = "https://search.itunes.apple.com/WebObjects/MZSearchHints.woa/wa/hints"
+	lookupURL         = "https://itunes.apple.com/lookup"
+	similarURL        = "https://itunes.apple.com/us/app/app/id"
+	ratingsURL        = "https://itunes.apple.com/%s/customer-reviews/id%d"
+	listURL           = "http://ax.itunes.apple.com/WebObjects/MZStoreServices.woa/ws/RSS/%s/%s/limit=%d/json"
+	searchURL         = "https://search.itunes.apple.com/WebObjects/MZStore.woa/wa/search"
+	reviewsURL        = "https://itunes.apple.com/%s/rss/customerreviews/page=%d/id=%d/sortby=%s/json"
+	appTokenURL       = "https://apps.apple.com/us/app/id"
+	appsPrivacyURL    = "https://amp-api.apps.apple.com/v1/catalog/US/apps/"
+	suggestURL        = "https://search.itunes.apple.com/WebObjects/MZSearchHints.woa/wa/hints"
+	collyScrapperLink = "https://apps.apple.com/us/app/id%d"
+
+	collyScrapperSelector = ".app-header__list__item--in-app-purchase"
 )
 
 type lookupResponse[T any] struct {

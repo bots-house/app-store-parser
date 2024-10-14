@@ -48,8 +48,9 @@ type App struct {
 	ArtworkURL60  string `json:"artworkUrl60"`
 
 	// Tech fields
-	WrapperType string  `json:"wrapperType"`
-	Ratings     Ratings `json:"-"`
+	WrapperType   string  `json:"wrapperType"`
+	Ratings       Ratings `json:"-"`
+	InAppPurchase bool    `json:"-`
 }
 
 func (app *App) Sanitize() {

@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 
+	"github.com/gocolly/colly/v2"
 	"github.com/rs/zerolog/log"
 
 	"github.com/bots-house/app-store-parser/shared"
@@ -58,6 +59,20 @@ func getApps(ctx context.Context, client shared.HTTPClient, spec appsSpec) ([]sh
 
 	apps = shared.Filter(apps, func(app shared.App) bool {
 		return app.WrapperType == "software"
+	})
+
+	scrapper := colly.NewCollector()
+
+	apps = shared.Map(apps, func(app shared.App) shared.App {
+		scrapper.OnHTML(collyScrapperSelector, func(h *colly.HTMLElement) {
+			if h.Text != "" {
+				app.InAppPurchase = true
+			}
+		})
+
+		_ = scrapper.Visit(fmt.Sprintf(collyScrapperLink, app.ID))
+
+		return app
 	})
 
 	if len(apps) == 0 {

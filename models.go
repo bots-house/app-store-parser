@@ -41,6 +41,7 @@ type App struct {
 	SupportedDevices      []string  `json:"supported_devices,omitempty"`
 	Icon                  string    `json:"icon,omitempty"`
 	Ratings               Ratings   `json:"ratings,omitempty"`
+	InAppPurchase         bool      `json:"in_app_purchase"`
 }
 
 func newApp(app *shared.App) *App {
@@ -79,6 +80,7 @@ func newApp(app *shared.App) *App {
 		SupportedDevices:      app.SupportedDevices,
 		Icon:                  app.Icon,
 		Ratings:               Ratings(app.Ratings),
+		InAppPurchase:         app.InAppPurchase,
 	}
 }
 
