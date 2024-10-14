@@ -96,6 +96,7 @@ func checkReviews(t *testing.T, reviews ...Review) {
 	}
 }
 
+// TODO: check functionality some tests fail
 func Test_Collector(t *testing.T) {
 	collector := New()
 	id := int64(553834731)
@@ -229,4 +230,36 @@ func Test_Collector(t *testing.T) {
 			return suggest.Term
 		})...))
 	})
+}
+
+func Test_InAppPurchase(t *testing.T) {
+	tests := []struct {
+		id       int64
+		expected bool
+	}{
+		{
+			id:       525818839,
+			expected: true,
+		},
+
+		{
+			id:       479516143,
+			expected: true,
+		},
+
+		{
+			id: 311395856,
+		},
+	}
+
+	collector := New()
+
+	for _, test := range tests {
+		app, err := collector.App(context.Background(), AppSpec{ID: test.id})
+		if !assert.NoError(t, err) {
+			return
+		}
+
+		assert.Equal(t, test.expected, app.InAppPurchase)
+	}
 }

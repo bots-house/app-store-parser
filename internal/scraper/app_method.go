@@ -3,7 +3,9 @@ package scraper
 import (
 	"context"
 	"fmt"
+	"net/http"
 
+	"github.com/PuerkitoBio/goquery"
 	"github.com/rs/zerolog/log"
 
 	"github.com/bots-house/app-store-parser/shared"
@@ -60,9 +62,43 @@ func getApps(ctx context.Context, client shared.HTTPClient, spec appsSpec) ([]sh
 		return app.WrapperType == "software"
 	})
 
+	apps = shared.Map(apps, func(app shared.App) shared.App {
+		ok, err := foundInAppPurchase(ctx, client, app.ID)
+		if err != nil {
+			return app
+		}
+
+		app.InAppPurchase = ok
+
+		return app
+	})
+
 	if len(apps) == 0 {
 		return nil, fmt.Errorf("apps not found")
 	}
 
 	return apps, nil
+}
+
+func foundInAppPurchase(ctx context.Context, client shared.HTTPClient, appID int64) (bool, error) {
+	req, err := http.NewRequestWithContext(ctx, http.MethodGet, fmt.Sprintf(inAppPurchaseLink, appID), http.NoBody)
+	if err != nil {
+		return false, err
+	}
+
+	resp, err := client.Do(req)
+	if err != nil {
+		return false, err
+	}
+
+	defer resp.Body.Close()
+
+	doc, err := goquery.NewDocumentFromReader(resp.Body)
+	if err != nil {
+		return false, err
+	}
+
+	text := doc.Find(inAppPurchaseSelector).Text()
+
+	return text != "", nil
 }
